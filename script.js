@@ -1,101 +1,128 @@
 const fetchAllCategory = async () => {
-  try {
-    const response = await fetch(
-      "https://openapi.programming-hero.com/api/videos/categories"
-    );
-    const data = await response.json();
-    getCategories(data.data);
-  } catch (error) {
-    console.error(error);
-  }
+    try {
+        const response = await fetch(
+            "https://openapi.programming-hero.com/api/videos/categories"
+        );
+        const data = await response.json();
+        setCategories(data.data);
+    } catch (error) {
+        console.error(error);
+    }
 };
+
+let cards = [];
 
 const fetchDataByCategory = async (id) => {
-  try {
-    const response = await fetch(
-      `https://openapi.programming-hero.com/api/videos/category/${id}`
-    );
-    const data = await response.json();
-    getData(data.data);
-  } catch (error) {
-    console.error(error);
-  }
+    try {
+        const response = await fetch(
+            `https://openapi.programming-hero.com/api/videos/category/${id}`
+        );
+        const data = await response.json();
+        cards = data.data;
+        setCards(data.data);
+    } catch (error) {
+        console.error(error);
+    }
 };
 
-const getCategories = (data) => {
-  const categoryDiv = document.getElementById("category");
+const setCategories = (data) => {
+    const categoryDiv = document.getElementById("category");
 
-  const categoriesHTML = data
-    .map(
-      (e) => `
+    const categoriesHTML = data
+        .map(
+            (e) => `
         <li onclick = "fetchDataByCategory(${e.category_id})"  class="">
-            <button type="button" class="focus:outline-none text-black bg-gray-300 hover:bg-red-500 focus:bg-red-500 focus:text-white font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 mt-5 p-4 hover:text-white">
+            <button type="button" class="focus:outline-none text-black bg-gray-300 hover:bg-red-500 focus:bg-red-500 focus:text-white font-medium rounded-lg text-sm px-3 sm:px-5 py-2 sm:py-2.5 mr-2 mb-2 mt-5 hover:text-white">
                 ${e.category}
             </button>
         </li>
-    `
-    )
-    .join("");
-  categoryDiv.innerHTML = categoriesHTML;
+        `
+        )
+        .join("");
+    categoryDiv.innerHTML = categoriesHTML;
 };
 
-const getData = (data) => {
+const setCards = (data) => {
     console.log(data);
-  const cardDiv = document.getElementById("card");
-  const cardHTML = data
-    .map(
-      (p) => `
-    <div class="max-w-sm bg-white rounded-lg"> 
-    <img
-    class="rounded-lg w-96 h-48"
-    src="${p.thumbnail}"
-    alt=""
-  />        
+    const cardContainer = document.getElementById("card-container");
 
-  <div class="flex mt-6 gap-6">
-    <div>
-      <img
-        class="rounded-full w-14 h-14"
-        src="${p.authors[0].profile_picture}"
-        alt=""
-      />
-    </div>
-    <div>
-      <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
-        ${p.title}
-      </h5>
-      <div class="flex gap-5 items-center">
-        <p class="mb-2 font-semibold text-sm text-gray-600">
-        ${p.authors[0].profile_name}
-        </p>
-        <svg
-          class="w-5 h-6 text-blue-600 dark:text-white"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path
-            fill="currentColor"
-            d="m18.774 8.245-.892-.893a1.5 1.5 0 0 1-.437-1.052V5.036a2.484 2.484 0 0 0-2.48-2.48H13.7a1.5 1.5 0 0 1-1.052-.438l-.893-.892a2.484 2.484 0 0 0-3.51 0l-.893.892a1.5 1.5 0 0 1-1.052.437H5.036a2.484 2.484 0 0 0-2.48 2.481V6.3a1.5 1.5 0 0 1-.438 1.052l-.892.893a2.484 2.484 0 0 0 0 3.51l.892.893a1.5 1.5 0 0 1 .437 1.052v1.264a2.484 2.484 0 0 0 2.481 2.481H6.3a1.5 1.5 0 0 1 1.052.437l.893.892a2.484 2.484 0 0 0 3.51 0l.893-.892a1.5 1.5 0 0 1 1.052-.437h1.264a2.484 2.484 0 0 0 2.481-2.48V13.7a1.5 1.5 0 0 1 .437-1.052l.892-.893a2.484 2.484 0 0 0 0-3.51Z"
-          />
-          <path
-            fill="#fff"
-            d="M8 13a1 1 0 0 1-.707-.293l-2-2a1 1 0 1 1 1.414-1.414l1.42 1.42 5.318-3.545a1 1 0 0 1 1.11 1.664l-6 4A1 1 0 0 1 8 13Z"
-          />
-        </svg>
-      </div>
-      <p class="font-semibold text-sm text-gray-600">
-        ${p.others.views} <span>views</span>
-      </p>
-    </div>
-  </div>
-  </div>
- `
-    )
-    .join("");
-  cardDiv.innerHTML = cardHTML;
+    cardContainer.textContent = "";
+
+    if (data.length <= 0) {
+        cardContainer.classList = "";
+        const noContent = document.createElement("div");
+        noContent.classList = "mt-20";
+        noContent.innerHTML = `<div class="flex flex-col justify-center items-center">
+        <img src="./Icon.png" alt="">
+        <h1 class="text-3xl font-bold text-gray-900 text-center mt-6 w-96">Oops!! Sorry, There is no content here</h1>
+    </div>`;
+        cardContainer.appendChild(noContent);
+    } else {
+        cardContainer.classList =
+            "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 my-5";
+    }
+
+    data.forEach((card) => {
+        const convertedTime = toHoursAndMinutes(card.others.posted_date);
+
+        const div = document.createElement("div");
+        div.classList =
+            "rounded-lg border shadow-sm relative";
+        div.innerHTML = `
+        <div>
+          <img id="thumbnail-img" class="rounded-t-lg w-full h-48" src="${
+              card.thumbnail
+          }" alt="" />
+        </div>
+        ${
+            card.others.posted_date === ""
+                ? ""
+                : `<p class="absolute bg-[#171717] text-white rounded-md p-1 px-2 text-xs right-1 top-40">${convertedTime}</p>`
+        }
+        <div class="flex gap-3 px-3 py-5">
+            <img class="h-10 w-10 rounded-full mt-2" src="${
+                card.authors[0].profile_picture
+            }" alt="">
+            <div class="flex flex-col">
+                <h2 class="font-bold text-lg">${card.title}</h2>
+                <div id="card-authors" class="flex items-center gap-2">
+                    <p class="font-medium text-gray-500">${
+                        card.authors[0].profile_name
+                    }</p>
+                    ${
+                        card.authors[0].verified === true
+                            ? '<img src="./images/verified.svg" class="h-4 w-4" alt="">'
+                            : ""
+                    }
+                </div>
+                <p class="font-medium text-gray-400">${card.others.views} views</p>
+            </div>
+        </div>`;
+
+        cardContainer.appendChild(div);
+    });
 };
+
+const toHoursAndMinutes = (seconds) => {
+    const totalMinutes = Math.floor(seconds / 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return `${hours} hrs ${minutes} min ago`;
+};
+
+const sortCardsByViews = (cards) =>
+    cards.sort((a, b) => {
+        const viewsA = +a.others.views.replace(/\D/g, "");
+        const viewsB = +b.others.views.replace(/\D/g, "");
+        return viewsB - viewsA;
+    });
+
+const sortButton = document.getElementById("sort-btn");
+sortButton.addEventListener("click", () => {
+    const sortedData = sortCardsByViews(cards);
+
+    setCards(sortedData);
+});
 
 fetchAllCategory();
 fetchDataByCategory(1000);
