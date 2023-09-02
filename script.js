@@ -124,5 +124,12 @@ sortButton.addEventListener("click", () => {
     setCards(sortedData);
 });
 
+const sortButtonPhone = document.getElementById("sort-btn-mobile");
+sortButtonPhone.addEventListener("click", () => {
+    const sortedData = sortCardsByViews(cards);
+
+    setCards(sortedData);
+});
+
 fetchAllCategory();
 fetchDataByCategory(1000);
